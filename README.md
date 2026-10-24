@@ -11,6 +11,8 @@ TrustVault is a secure document-sharing platform built to protect sensitive docu
 
 **GitHub Repository:** https://github.com/keerthanagopu29/TrustVault
 
+**Demo Video:** [https://github.com/keerthanagopu29/TrustVault](https://drive.google.com/file/d/1zK0xFum_7YfOtCdvb2nsYPkGIug0pPZE/view?usp=sharing)
+
 > Note: The backend is hosted on Render's free service, so the first request may take a little time while the service starts.
 
 ## 👤 Demo Login Credentials
