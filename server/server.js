@@ -427,11 +427,15 @@ app.post("/api/auth/login",
         req.session.regenerate(err => err ? reject(err) : resolve());
       });
       req.session.userId = String(user._id);
-      await audit(user._id, "LOGIN_SUCCESS");
+await audit(user._id, "LOGIN_SUCCESS");
 
-      res.json({
-        user: { id: user._id, name: user.name, email: user.email, role: user.role },
-      });
+await new Promise((resolve, reject) => {
+  req.session.save(err => err ? reject(err) : resolve());
+});
+
+res.json({
+  user: { id: user._id, name: user.name, email: user.email, role: user.role },
+});
     } catch (err) {
       next(err);
     }
