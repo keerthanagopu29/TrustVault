@@ -25,6 +25,7 @@ if (!process.env.MONGODB_URI || !process.env.SESSION_SECRET) {
 }
 
 app.disable("x-powered-by");
+app.set("trust proxy", 1);
 app.use(helmet());
 app.use(cors({
   origin: process.env.CLIENT_ORIGIN || "http://localhost:5173",
@@ -45,11 +46,11 @@ app.use(session({
   saveUninitialized: false,
   store: sessionStore,
   cookie: {
-    httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-    maxAge: 30 * 60 * 1000,
-  },
+  httpOnly: true,
+  secure: true,
+  sameSite: "none",
+  maxAge: 30 * 60 * 1000,
+},
 }));
 
 
@@ -429,10 +430,13 @@ app.post("/api/auth/login",
       req.session.userId = String(user._id);
 await audit(user._id, "LOGIN_SUCCESS");
 
+
 await new Promise((resolve, reject) => {
   req.session.save(err => err ? reject(err) : resolve());
 });
-
+await new Promise((resolve, reject) => {
+  req.session.save(err => err ? reject(err) : resolve());
+});
 res.json({
   user: { id: user._id, name: user.name, email: user.email, role: user.role },
 });
