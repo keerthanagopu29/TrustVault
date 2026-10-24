@@ -1,158 +1,167 @@
-# TrustVault — Secure Document Access
+# 🔐 TrustVault
+### Secure Document Sharing with a Verifiable Audit Trail
 
-TrustVault is a role-aware document-sharing application built with React, Express, and MongoDB. It is designed to help users share documents with explicit permissions and maintain an audit trail of access-related activity.
+TrustVault is a secure document-sharing platform built to protect sensitive documents through role-based access control, permission management, and an auditable record of security-related actions.
 
-## Features
+## 🚀 Live Demo
 
-The following features are implemented in the project code and must be verified against the running application before being claimed as fully working:
+**Frontend:** https://trustvault-frontend-loci.onrender.com
 
-- **Authentication:** registration, login/logout, session cookies, and password hashing.
-- **Roles:** administrator, document owner, and viewer, with server-side authorization.
-- **Document management:** private document storage, search and filtering, and upload validation.
-- **Sharing:** read/edit permissions and owner-controlled access revocation.
-- **Administration:** user management and audit-record inspection.
-- **Audit trail:** hash-linked audit records and chain verification.
-- **Security testing:** automated cross-account authorization test coverage.
+**Backend API:** https://trustvault-gilw.onrender.com
 
-Check the actual application and tests before submission to confirm each feature and its current behavior.
+**GitHub Repository:** https://github.com/keerthanagopu29/TrustVault
 
-## Technology Stack
+> Note: The backend is hosted on Render's free service, so the first request may take a little time while the service starts.
 
-- Frontend: React and Vite
-- Backend: Node.js and Express
-- Database: MongoDB with Mongoose
-- Authentication: server-side sessions and password hashing
+## 👤 Demo Login Credentials
 
-## Requirements
+Use the dedicated evaluation accounts below to test the application. Replace the placeholders with verified credentials before submitting.
 
-- Node.js 20 or later
-- npm
-- A local MongoDB instance or MongoDB Atlas database
+| Role | Email | Password |
+|---|---|---|
+| Admin | 24jr5a4401@gmail.com | Keerthana@1234 |
+| Owner | aruna@gmail.com | Keerthana@1234 |
+| Viewer 1 | pavithra@gmail.com | Keerthana@1234 |
+| Viewer 2 | 24jr5a4401gdg@gmail.com | Keerthana@1234 |
 
-## Local Setup
+**Security note:** These must be dedicated demo accounts, not personal accounts. Only publish passwords intended for public evaluation. Never include database credentials, session secrets, or `.env` values.
 
-### 1. Configure the backend
+## ✨ Key Features
 
-From the project root, create your local environment file:
+- **Authentication:** Account login and session-based authentication.
+- **Role-Based Access Control:** Separate permissions for Admin, Owner, and Viewer.
+- **Secure Document Upload:** Owners can upload documents to the platform.
+- **Permission Management:** Owners can grant and revoke document access.
+- **Protected Downloads:** Documents are accessible only to authorized users.
+- **Audit Logging:** Records relevant security and document actions.
+- **Audit Integrity Verification:** Provides a mechanism to verify the audit log hash chain.
+- **User Management:** Admins can review registered users and manage roles.
+- **Document Organization:** Supports document categories and search.
 
-```cmd
-copy server\.env.example server\.env
+## 🧪 Quick Evaluation Guide
+
+### 1. Test the Owner Role
+1. Log in using the Owner demo account.
+2. Upload a sample document that contains no sensitive information.
+3. Grant access to the Viewer demo account.
+4. Confirm that the granted user appears in the sharing details.
+5. Revoke access and confirm the permission is removed.
+
+### 2. Test the Viewer Role
+1. Log in using the Viewer demo account.
+2. Confirm that the shared document appears in the document list.
+3. Download the document.
+4. Verify that documents not shared with this account are inaccessible.
+
+### 3. Test the Admin Role
+1. Log in using the Admin demo account.
+2. Open the Admin Dashboard.
+3. Review registered users and recent audit activity.
+4. Run the audit-chain verification feature and inspect the result.
+
+## 🛠️ Technology Stack
+
+**Frontend:** React, Vite, JavaScript, CSS
+
+**Backend:** Node.js, Express.js
+
+**Database:** MongoDB Atlas, Mongoose
+
+**Authentication:** Express Session, MongoDB-backed session storage
+
+**Security:** Role-based authorization, Helmet, CORS configuration, rate limiting, input validation, and audit logging
+
+**Deployment:** Render
+
+## 🏗️ Project Structure
+
+```text
+TrustVault/
+├── client/             # React frontend
+├── server/             # Express backend
+├── README.md
+├── API.md              # API documentation
+├── THREATS.md          # Threat model
+├── PROMPTS.md          # AI assistance disclosure, if applicable
+└── SUBMISSION_CHECKLIST.md
 ```
 
-Edit `server/.env` and configure the required database connection and session secret.
+## ⚙️ Local Setup
 
-### 2. Install and start the backend
+### Prerequisites
+- Node.js and npm
+- MongoDB connection string
+- Git
 
-```cmd
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/keerthanagopu29/TrustVault.git
+cd TrustVault
+```
+
+### 2. Configure the Backend
+
+```bash
 cd server
 npm install
+```
+
+Create a local `.env` file using the variable names expected by the backend:
+
+```env
+PORT=5000
+MONGODB_URI=your_mongodb_connection_string
+SESSION_SECRET=your_long_random_session_secret
+CLIENT_ORIGIN=http://localhost:5173
+```
+
+Use your own local development values. Do not commit `.env`.
+
+### 3. Configure the Frontend
+
+In a separate terminal:
+
+```bash
+cd client
+npm install
+```
+
+Configure the frontend API URL using the environment variable expected by the client:
+
+```env
+VITE_API_URL=http://localhost:5000/api
+```
+
+### 4. Run the Application
+
+Start the backend using the start script defined in `server/package.json`, or the documented server entry point.
+
+Start the frontend using:
+
+```bash
 npm run dev
 ```
 
-Keep this terminal running while you use the application.
+Run each command from its corresponding directory.
 
-### 3. Start the frontend
+## 📚 Documentation
 
-Open a second terminal at the project root and run:
+- [API Documentation](API.md)
+- [Threat Model](THREATS.md)
+- [AI Assistance Disclosure](PROMPTS.md)
+- [Submission Checklist](SUBMISSION_CHECKLIST.md)
 
-```cmd
-cd client
-npm install
-npm run dev
-```
+## 🔒 Security Considerations
 
-Open the local URL printed by Vite, normally `http://localhost:5173`.
+- Keep secrets and environment files out of version control.
+- Use dedicated evaluation accounts with limited access.
+- Do not upload real confidential documents to the public demo.
+- Access to documents should be enforced by the backend, not only by the frontend interface.
+- Audit logs should be checked using the application's verification functionality.
 
-### 4. Create test accounts
+## 👩‍💻 Project
 
-Register accounts through the application. Confirm the default role assigned to new accounts by checking the current backend implementation. Use an isolated test environment for any administrator or owner accounts.
+**TrustVault — Secure Document Sharing with a Verifiable Audit Trail**
 
-## Environment Variables and Secrets
-
-See `server/.env.example` and `client/.env.example` for the environment variables supported by the project.
-
-Never commit:
-
-- `.env` files containing actual credentials
-- Database connection strings with passwords
-- Session secrets, API keys, or password-reset tokens
-- Real private documents or uploaded user files
-
-For deployment, configure the frontend origin, API URL, database connection, session secret, and any external integrations through the hosting provider's environment settings.
-
-## Password Reset
-
-Password-reset delivery depends on the implementation and configuration in the current backend. If delivery uses an external webhook, configure the required endpoint and secret in the deployment environment and test the complete flow before claiming production support.
-
-Do not expose reset tokens in production responses or publish real reset tokens in logs, documentation, or source control.
-
-## Demo Accounts
-
-Use a dedicated demo database and non-sensitive sample documents.
-
-If the seed script is used, inspect its current requirements and safeguards before running it:
-
-```bash
-cd server
-npm run
-```
-
-Use only the seed command listed in `server/package.json`. Keep demo credentials out of source control and provide them to evaluators only through the challenge's permitted submission channel.
-
-## Automated Authorization Tests
-
-Inspect `server/package.json` to confirm the available test command. If the test script is configured as `npm test`, run it from the server directory:
-
-```bash
-cd server
-npm test
-```
-
-Configure a dedicated test database if required by the tests. Never point test configuration at a production database or a database containing important user data.
-
-Record the actual test results for the final submission. A passing test suite does not, by itself, prove that every route or attack scenario has been covered.
-
-## Frontend Build and Lint
-
-Run these commands from the client directory:
-
-```bash
-cd client
-npm run build
-npm run lint
-```
-
-Run only scripts that are present in `client/package.json`. Record any failures and resolve them before submission.
-
-## Deployment Checklist
-
-Before deploying:
-
-- Configure production database credentials and a strong session secret.
-- Set the correct frontend origin and API URL.
-- Enable HTTPS and restrict cross-origin requests to the intended frontend.
-- Confirm the hosting environment supports the application's session configuration.
-- Ensure uploaded documents are stored on persistent private storage. Local files may be lost when a host restarts or redeploys if its filesystem is ephemeral.
-- Configure and verify any required password-reset delivery integration.
-- Keep demo seed credentials and real user documents out of the public repository.
-- Test login/logout, all roles, document permissions, revocation, refused access, upload validation, and audit verification.
-- Verify deployment instructions from a clean clone of the repository.
-
-**Live deployment:** Add the real URL after deployment is complete.
-
-**Public repository:** Add the actual repository URL after it has been created.
-
-## Project Documentation
-
-- `API.md` — API routes and authorization reference.
-- `THREATS.md` — threat model, mitigations, and residual risks.
-- `PROMPTS.md` — AI assistance disclosure and validation log.
-- `SUBMISSION_CHECKLIST.md` — submission preparation checklist.
-
-## Known Limitations and Security Considerations
-
-- External password-reset delivery must be configured and tested if the feature depends on a webhook.
-- Local file storage requires persistent private storage in production; multi-instance deployments may need private object storage.
-- A hash-linked audit chain can help detect changes, but an attacker who can rewrite the entire chain may be able to reconstruct it. Independent signed checkpoints or an append-only external store provide stronger tamper evidence.
-- Elevated roles should be granted only through a trusted, authorized process.
-- Features, tests, deployment status, and security claims must be confirmed against the actual running application before final submission.
+Developed as a project submission demonstrating secure document access, role-based authorization, and auditability.
