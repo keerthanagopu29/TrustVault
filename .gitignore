@@ -1,0 +1,22 @@
+# Secrets and local environment files
+.env
+.env.*
+!.env.example
+
+# Dependencies and generated build output
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+
+# Private uploaded files and local data
+server/private_uploads/
+*.log
+*.local
+
+# Editor / operating system files
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
