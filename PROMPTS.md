@@ -2,124 +2,117 @@
 
 ## Overview
 
-TrustVault used AI assistance as a development aid for reviewing code structure, identifying role and authorization inconsistencies, drafting documentation, and proposing tests and UI improvements.
+TrustVault was developed with assistance from ChatGPT and Claude for code review, debugging, security analysis, testing ideas, and documentation.
 
-AI-generated suggestions were treated as proposals rather than proof of correctness. Changes must be reviewed and validated through code inspection, application testing, and automated tests.
+AI suggestions were treated as proposals, not proof of correctness. I reviewed the application, investigated issues, and manually tested the deployed document-sharing and authorization workflows.
 
-## Work Areas Assisted by AI
+**Evidence note:** The entries below summarize representative work areas. The original prompt dates and complete AI conversation history were not retained for every item. The log preparation date is not being presented as the original date of each prompt.
 
-- Reviewing the Express/Mongoose API and React UI against the challenge requirements.
-- Identifying potential gaps involving password change/reset, document sharing and revocation, date filters, and frontend/API role consistency.
-- Drafting the threat model, setup and deployment documentation, API reference, and demo checklist.
-- Proposing a route-level authorization test for cross-account document isolation.
-- Reviewing audit-chain verification logic and identifying a duplicated helper definition.
+## Entry 1 — Login Session Persistence
 
-## Prompt and Validation Entries
+**Log date:** 2026-10-24  
+**AI tools:** ChatGPT and Claude, where applicable to the work session.
 
-The following are representative prompts associated with the project. They are not presented as a complete chronological transcript. Add dated records for individual development sessions and link the actual fixing commits before final submission.
+**Prompt summary:** Investigate login/session behavior and identify why an authenticated user might not remain logged in.
 
-### Entry 1 — Challenge and Security Review
+**AI assistance:** Used development guidance to investigate session configuration and authentication behavior.
 
-**Date:** To be recorded from the actual development session.
+**Problem and validation:** Session behavior needed to be checked in the running application; a successful login response alone does not prove that subsequent requests retain authentication.
 
-**Prompt used:**
+**What I did:** Investigated the server session configuration and tested login behavior. I confirmed that the deployed application allowed me to log in and access the authenticated interface.
 
-> Review the TrustVault source code against the challenge rubric. Identify missing features, security gaps, and inconsistencies between frontend controls and server-side authorization.
+**Evidence:** [Commit — Fix login session persistence](https://github.com/keerthanagopu29/TrustVault/commit/a87f39a)
 
-**AI/tool output:** A review of the project against the challenge requirements, identifying potential missing features, security gaps, and inconsistencies.
+**Limitation:** The commit title documents a session-related fix but does not independently establish the exact AI suggestion or every test performed.
 
-**Limitations or issues:** Recommendations alone do not establish that a vulnerability exists or that a feature is missing. Each finding must be checked against the actual source code and application behavior.
+## Entry 2 — Proxy Trust and Rate Limiting
 
-**Change made:** Record the specific finding investigated, the files changed, and the result of validation.
+**Log date:** 2026-10-24
 
-**Validation evidence:** Record the relevant test command, test result, or manual verification.
+**Prompt summary:** Investigate a rate-limiting configuration issue in the deployed server environment.
 
-**Fixing commit:** Add the actual commit hash or GitHub commit URL after the change has been committed.
+**AI assistance:** Used debugging guidance to investigate how the application handles proxy information when deployed behind a hosting provider.
 
-### Entry 2 — Password Change and Reset
+**Problem and validation:** Proxy configuration must match the hosting environment. An incorrect trust setting can affect client-IP identification and rate-limit behavior.
 
-**Date:** To be recorded from the actual development session.
+**What I did:** Updated the proxy-trust configuration and retained the change in version control.
 
-**Prompt used:**
+**Evidence:** [Commit — Fix proxy trust for rate limiting](https://github.com/keerthanagopu29/TrustVault/commit/1fcfd74)
 
-> Implement password change and a short-lived password-reset token flow. Do not expose reset tokens in production responses; make the delivery integration explicit and configurable.
+**Limitation:** The commit title supports the configuration change, but a separate rate-limit test result has not been recorded in this log.
 
-**AI/tool output:** Proposed an implementation approach for password change and password-reset handling.
+## Entry 3 — Document Authorization and Revocation
 
-**Limitations or issues:** A proposed flow is not proof that reset tokens expire correctly, cannot be reused, or are delivered securely. The production delivery integration must be tested separately.
+**Log date:** 2026-10-24
 
-**Change made:** Record the actual implementation changes, or state that the feature remains incomplete if it was not implemented.
+**Prompt summary:** Review document access controls and verify that users cannot access private documents without permission.
 
-**Validation evidence:** Record tests for token expiry, token reuse, password updates, and production response behavior where applicable.
+**AI assistance:** Used guidance to review owner/viewer behavior and consider server-side authorization checks.
 
-**Fixing commit:** Add the actual commit hash or GitHub commit URL after the change has been committed.
+**Problem and validation:** Hiding a button in the frontend is not sufficient. The server must reject unauthorized requests, including attempts to download a document after permission is revoked.
 
-### Entry 3 — Document Sharing and Revocation
+**What I did:** Tested the deployed application using different account roles. I confirmed that an authorized viewer could access a shared document and that access was denied after the owner revoked permission.
 
-**Date:** To be recorded from the actual development session.
+**Evidence:** [TrustVault repository](https://github.com/keerthanagopu29/TrustVault)
 
-**Prompt used:**
+**Limitation:** The available commit list does not identify a dedicated commit for this particular manual verification. The GitHub repository link is provided for code review, not as proof of a specific fixing commit.
 
-> Add owner-facing sharing and revocation controls for registered users with read/edit permissions, while preserving server-side ownership checks.
+## Entry 4 — Cross-Account Authorization Test
 
-**AI/tool output:** Proposed owner-facing sharing and revocation controls and related authorization checks.
+**Log date:** 2026-10-24
 
-**Limitations or issues:** Hiding or disabling frontend controls is not sufficient authorization. The backend must enforce permissions on every relevant request, including after access is revoked.
+**Prompt summary:** Create a route-level test to check whether one account can list, download, edit, or delete another account's private document.
 
-**Change made:** Record the actual UI and API changes made, or document any unfinished work.
+**AI assistance:** Used guidance to prepare an automated authorization test in `server/tests/document-authorization.test.js`.
 
-**Validation evidence:** Record tests for permitted access, denied access, edit permissions, and access after revocation.
+**Problem and validation:** The test requires a dedicated MongoDB test database. It must never run against the production database because its setup deletes test collections.
 
-**Fixing commit:** Add the actual commit hash or GitHub commit URL after the change has been committed.
+**What I did:** Inspected the test's safety checks and attempted to run it. The test stopped because `TEST_MONGODB_URI` was not configured.
 
-### Entry 4 — Cross-Account Authorization Testing
+**Actual result:** The automated authorization test has not passed and remains unverified. Manual testing of the deployed access and revocation workflows was completed separately.
 
-**Date:** To be recorded from the actual development session.
+**Evidence:** [TrustVault repository](https://github.com/keerthanagopu29/TrustVault)
 
-**Prompt used:**
+**Limitation:** This entry documents an attempted test, not a successful automated test or a confirmed fixing commit.
 
-> Create a route-level automated test proving that one account cannot list, download, edit, or delete another account’s private document.
+## Entry 5 — Audit Trail and Integrity Verification
 
-**AI/tool output:** Proposed an automated test for cross-account document isolation.
+**Log date:** 2026-10-24
 
-**Limitations or issues:** A test can pass without covering every route or attack scenario. The test must run against the actual application and verify both HTTP responses and relevant side effects.
+**Prompt summary:** Review audit-trail integrity verification and ensure important document-access activities can be inspected.
 
-**Change made:** Record the actual test implementation and any authorization fixes made after reviewing its results.
+**AI assistance:** Used code-review and debugging guidance to examine audit-related behavior and documentation.
 
-**Validation evidence:** Record the exact test command and its actual result. Include the tested routes and denied operations.
+**Problem and validation:** An audit log should not simply display events; its integrity verification should report whether the recorded chain is valid. A valid result does not, by itself, prove that every possible security event is recorded.
 
-**Fixing commit:** Add the actual commit hash or GitHub commit URL after the change has been committed.
+**What I did:** Used the deployed admin interface to verify the audit chain and inspect recorded activities. The application reported a valid audit chain, and I observed permission-revocation and denied-access events.
 
-### Entry 5 — Threat Model and Documentation
+**Evidence:** [TrustVault repository](https://github.com/keerthanagopu29/TrustVault)
 
-**Date:** To be recorded from the actual development session.
+**Limitation:** The commit list available when preparing this log does not identify a dedicated audit-chain fixing commit. The observed application result is manual validation, not an automated test result.
 
-**Prompt used:**
+## Additional Documentation Work
 
-> Draft a threat model with assets, trust boundaries, abuse cases, mitigations, and residual risks, and document local setup and deployment requirements.
+The repository includes documentation covering project setup, API behavior, threat considerations, AI assistance, and submission preparation. Documentation was reviewed against the application, and the README was updated for the challenge.
 
-**AI/tool output:** Proposed threat-model content and project setup/deployment documentation.
-
-**Limitations or issues:** Documentation may describe intended behavior rather than verified behavior. Setup instructions, security mitigations, and deployment claims must be checked against the current code and environment.
-
-**Change made:** Record the documentation sections reviewed and corrected, along with any implementation changes resulting from the review.
-
-**Validation evidence:** Record the clean-clone setup checks, deployment checks, or other verification actually completed.
-
-**Fixing commit:** Add the actual commit hash or GitHub commit URL after the change has been committed.
+**Evidence:** [Commit — Update README for challenge submission](https://github.com/keerthanagopu29/TrustVault/commit/9a97006)
 
 ## Human Review and Verification
 
-Before final submission:
+The following checks were performed or remain outstanding:
 
-- Run the backend automated tests and record their actual results.
-- Run the frontend build and lint checks, where configured.
-- Manually test administrator, owner, and viewer behavior.
-- Verify server-side authorization for read, download, edit, delete, sharing, and revocation operations.
-- Verify audit events for permitted and refused access attempts.
-- Test password-reset delivery in the actual deployment if the feature is included.
-- Verify deployment instructions from a clean clone.
-- Confirm that the demo video and README describe only implemented and verified features.
-- Replace the date placeholders with accurate dates and add real commit links for the corresponding changes.
+- Manually tested owner login and document upload.
+- Manually tested viewer access and document download.
+- Confirmed that access was denied after permission revocation.
+- Confirmed that the admin interface reported the audit chain as valid.
+- Confirmed that permission-revocation and denied-access events appeared in the audit log.
+- Automated cross-account authorization testing remains incomplete because a dedicated test database connection has not been configured.
+- A clean-clone setup verification and complete automated security-test run have not been recorded here.
 
-AI assistance does not guarantee correctness or security. Unimplemented features, failed tests, and known limitations must be disclosed honestly.
+## Limitations and Disclosure
+
+The live application and GitHub repository were available during manual review. Manual testing covers the workflows exercised, not every possible attack or edge case.
+
+This file is a representative AI assistance and validation summary, not a complete chronological transcript. The original dates and dedicated fixing commits for every entry were not retained. Commit links are included only where an identifiable commit exists; repository links are not presented as substitutes for missing commit evidence.
+
+AI assistance does not guarantee security or correctness. Unfinished work, unverified tests, and remaining limitations are disclosed above rather than presented as completed.
